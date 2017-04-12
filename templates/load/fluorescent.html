@@ -1,0 +1,89 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input[name="measure_datetime"]').val(getLocalTime());
+
+        $("#save_temperature").click(function(){
+            var bp=$("#temperatureInfo").serialize();<!--血糖表单数据-->
+            $.getJSON("/Ajax/temperature/",
+                      bp,
+                      function(data){
+                          if(data['error']=='1'){
+                              if($('#state2').val()=='0'){
+                                  LineTable3('fluorescent_charts',
+                                          data['measure_datetime'],
+                                          data['temperature']
+                                  );
+                                  $('#state2').val('1');
+                              }else{
+                                  $('#save_error2').text('数据录入出错!');
+                              }
+                          }else{
+                              $('#save_error2').text('数据录入成功!');
+                              $("#temperatureInfo :input").val("");
+                              $('input[name="measure_datetime"]').val(getLocalTime());
+                              $('#fluorescent_charts').empty();
+                              LineTable3('fluorescent_charts',
+                                      data['measure_datetime'],
+                                      data['temperature']
+                              );
+                          }
+                      }
+            );
+        }).trigger("click");
+    });
+</script>
+
+<div class="clear"></div>
+
+<div class="grid_6">
+<div class="box round">
+    <h2>干式荧光仪数据上传</h2>
+    <div id="body_temperature" class="block">
+        <form id="temperatureInfo">
+            <table class="form">
+                <!--体温 -->
+                <tr>
+                    <td class="col1">
+                        <label>干式荧光仪数据</label>
+                    </td>
+                    <td class="col2">
+                        <input type="text" class="large" name="temperature"/>
+                    </td>
+                </tr>
+                <!--其他 -->
+                <tr>
+                    <td>
+                        <label>其他信息</label>
+                    </td>
+                    <td>
+                        <textarea rows="11" style="width: 85%" name="demoInfo"></textarea>
+                    </td>
+                </tr>
+                <!--测量时间 -->
+                <tr>
+                    <td>
+                        <label>测量时间</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="measure_datetime"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <p id="save_error2" class="error" style="color: red"></p>
+        <button id="save_temperature" class="btn btn-small btn-blue">数据提交</button>
+        <input type="hidden" id="state2" value="0">
+    </div>
+</div>
+</div>
+
+<div class="grid_6">
+<div class="box round">
+    <h2>干式荧光仪数据记录</h2>
+    <div class="block">
+        <div id="fluorescent_charts"></div>
+    </div>
+</div>
+</div>

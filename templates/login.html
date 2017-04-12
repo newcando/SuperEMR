@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+<div align="center">
+    {% if form.errors %}
+        <p style="color: red;">
+            登录失败
+        </p>
+    {% endif %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+            {{ uf.as_table }}
+        </table>
+        <input type="submit" value="登录">
+    </form>
+    <a href="/regist">注册</a>
+{#    <li><a rel="nofollow" href="{% url socialauth_begin 'weibo' %}">weibo</a></li>#}
+{#    <li><a rel="nofollow" href="{% url socialauth_begin 'qq' %}">qq</a></li>#}
+{#    <li><a rel="nofollow" href="{% url socialauth_begin 'douban-oauth2' %}">douban</a></li>#}
+</div>
+</body>
+</html>

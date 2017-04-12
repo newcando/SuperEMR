@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>超级病历- {% block title%}{%  endblock %}</title>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js" ></script>
+    <script src="http://apps.bdimg.com/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    {% block JavaScript %}{% endblock %}
+	<link type="text/css" rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" />
+    <link type="text/css" rel="stylesheet" href="http://apps.bdimg.com/libs/jqueryui/1.9.2/themes/base/jquery.ui.theme.css" />
+    <script type="text/javascript">
+  		$(function() {
+            $( "#all_div" ).position({my:"top center",at:"top center",of:"body"});
+            $( "#menu" ).menu({
+      		items: "> :not(.ui-widget-header)"
+    		});
+            {% block jQueryContent %}{% endblock %}
+ 		});
+  </script>
+  <style type="text/css">
+  .ui-menu { width: 150px; }
+  #all_div{width: 900px}
+  {% block CssContent %}{% endblock %}
+  </style>
+</head>
+
+<body class="ui-themename">
+<div id="all_div">
+    <ul id="menu">
+  		<li class="ui-widget-header">基本信息</li>
+  		<li><span class="ui-icon ui-icon-circle-triangle-e"></span><a href="/emr/index" >个人资料</a></li>
+  		<li><span class="ui-icon ui-icon-circle-triangle-e"></span><a href="#" >账户信息</a></li>       
+  		<li class="ui-widget-header">病历资料</li>
+  		<li><span class="ui-icon ui-icon-circle-triangle-e"></span><a href="/emr/uploademr" >病历录入</a></li>
+        <li><span class="ui-icon ui-icon-circle-triangle-e"></span><a href="/emr/manageemr" >病历管理</a></li>
+  		<li><span class="ui-icon ui-icon-circle-triangle-e"></span><a href="/emr/device" >监测设备</a></li>
+  		<li><span class="ui-icon ui-icon-circle-triangle-e"></span><a href="/emr/MAR" >用药记录</a></li>
+        <li class="ui-widget-header">退出</li>
+        <li><span class="ui-icon ui-icon-circle-triangle-e"></span><a href="http://127.0.0.1:8000/emr/logout" >安全退出</a></li>
+	</ul>
+    {% block content %}{% endblock %}
+</div>
+{% block Information %}{% endblock %}
+</body>
+</html>

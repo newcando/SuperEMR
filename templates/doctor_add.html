@@ -1,0 +1,156 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var Table = $('#doctor_table').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+            },
+            "ajax": "/Ajax/doctor_table/"
+        });
+        $('#doctor_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+        $("#save_doctor").click(function(){
+            var bp=$("#doctorInfo").serialize();<!--医疗机构表单数据-->
+            $.getJSON("/Ajax/add_doctor/",
+                      bp,
+                      function(data){
+                          if(data['error']=='1'){
+                              if($('#state').val()=='0'){
+                                  $('#state').val('1');
+                              }else{
+                                  $('#save_error').text('数据录入出错!');
+                              }
+                          }else{
+                              $('#save_error').text('数据录入成功!');
+                              $("#doctorInfo :input").val("");
+                              Table.row.add(data['new_doctor']).draw();
+                          }
+                      }
+            );
+        });
+    });
+</script>
+
+<div class="grid_6">
+<div class="box round first">
+    <h2>新增医生</h2>
+    <div id="orgnization_add" class="block">
+        {% csrf_token %}
+        <form id="doctorInfo" method="POST" enctype="multipart/form-data">
+            <table class="form">
+                <!--医生姓名 -->
+                <tr>
+                    <td class="col1">
+                        <label>医生姓名</label>
+                    </td>
+                    <td class="col2">
+                        <input type="text" class="large" name="doctorname"/>
+                    </td>
+                </tr>
+                <!--科室 -->
+                <tr>
+                    <td>
+                        <label>科室</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="department"/>
+                    </td>
+                </tr>
+                <!--医疗机构 -->
+                <tr>
+                    <td>
+                        <label>医疗机构</label>
+                    </td>
+                    <td>
+                        <select id="select" name="orgnization">
+                            {% for org in user.mdlmymedicalorgnization_set.all %}
+                                <option value="{{ org.name }}">{{ org.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <!--专长 -->
+                <tr>
+                    <td>
+                        <label>专长</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="specialTech"/>
+                    </td>
+                </tr>
+                <!--联系电话 -->
+                <tr>
+                    <td>
+                        <label>联系电话</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="phoneNum"/>
+                    </td>
+                </tr>
+                <!--其它信息 -->
+                <tr>
+                    <td>
+                        <label>其它信息</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="demoInfo"/>
+                    </td>
+                </tr>
+                <input type="hidden" id="mark_image" name="mark_image">
+            </table>
+        </form>
+        <p id="save_error" class="error" style="color: red"></p>
+        <button id="save_doctor" class="btn btn-small btn-blue">数据提交</button>
+        <input type="hidden" id="state" value="0">
+    </div>
+</div>
+</div>
+
+<div class="grid_6">
+<div class="box round first">
+    <h2>医生</h2>
+    <div class="block">
+        <div id="doctor_pictures" >
+            <img id="preview"/>
+            <p>此处可放置医生简介</p>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>医生查询</h2>
+    <div class="block">
+        <table id="doctor_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>医生姓名</th>
+                    <th>科室</th>
+                    <th>医疗机构</th>
+                    <th>专长</th>
+                    <th>联系电话</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>医生姓名</th>
+                    <th>科室</th>
+                    <th>医疗机构</th>
+                    <th>专长</th>
+                    <th>联系电话</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

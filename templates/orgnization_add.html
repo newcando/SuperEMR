@@ -1,0 +1,204 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        initComplexArea('seachprov', 'seachcity', 'seachdistrict', area_array, sub_array, sub_arr,
+                getIDFromStr('{{ user.state }}')  ,
+                getIDFromStr('{{ user.city }}') ,
+                getIDFromStr('{{ user.district }}') );
+        var Table = $('#orgnization_table').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+            },
+            "ajax": "/Ajax/orgnization_table/"
+        });
+        $('#orgnization_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+        $("#save_orgnization").click(function(){
+            var areaID = getAreaID();
+            $('#state_').val(getStateNamebyID(areaID));
+            $('#city_').val(getCityNamebyID(areaID));
+            $('#district_').val(getdistrictNamebyID(areaID));
+            var bp=$("#orgnizationInfo").serialize();<!--医疗机构表单数据-->
+            $.getJSON("/Ajax/add_orgnization/",
+                      bp,
+                      function(data){
+                          if(data['error']=='1'){
+                              if($('#state').val()=='0'){
+                                  $('#state').val('1');
+                              }else{
+                                  $('#save_error').text('数据录入出错!');
+                              }
+                          }else{
+                              $('#save_error').text('数据录入成功!');
+                              $("#orgnizationInfo :input").val("");
+                              Table.row.add(data['new_orgnization']).draw();
+                          }
+                      }
+            );
+        });
+    });
+</script>
+
+<div class="grid_6">
+<div class="box round first">
+    <h2>新增医疗机构</h2>
+    <div id="orgnization_add" class="block">
+        {% csrf_token %}
+        <form id="orgnizationInfo" method="POST" enctype="multipart/form-data">
+            <table class="form">
+                <!--医院名称 -->
+                <tr>
+                    <td class="col1">
+                        <label>医院名称</label>
+                    </td>
+                    <td class="col2">
+                        <input type="text" class="large" name="name"/>
+                    </td>
+                </tr>
+                <!--地址-->
+                <tr>
+                    <td>
+                        <label>地址</label>
+                    </td>
+                    <td>
+                        <div id="city">
+                            <select id="seachprov" name="_state" onChange="changeComplexProvince(this.value, sub_array, 'seachcity', 'seachdistrict');"></select>&nbsp;&nbsp;
+                            <select id="seachcity" name="_city" onChange="changeCity(this.value,'seachdistrict','seachdistrict');"></select>&nbsp;&nbsp;
+                            <span id="seachdistrict_div"><select id="seachdistrict" name="_district"></select></span>
+                        </div>
+                        <input type="hidden" id="state_" name="state">
+                        <input type="hidden" id="city_" name="city">
+                        <input type="hidden" id="district_" name="district">
+                    </td>
+                </tr>
+                <!--地址行1 -->
+                <tr>
+                    <td>
+                        <label>地址行1</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="addressline1"/>
+                    </td>
+                </tr>
+                <!--地址行2 -->
+                <tr>
+                    <td>
+                        <label>地址行2</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="addressline2"/>
+                    </td>
+                </tr>
+                <!--邮编 -->
+                <tr>
+                    <td>
+                        <label>邮编</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="zipcode"/>
+                    </td>
+                </tr>
+                <!--服务电话1 -->
+                <tr>
+                    <td>
+                        <label>服务电话1</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="phoneNum1"/>
+                    </td>
+                </tr>
+                <!--服务电话2 -->
+                <tr>
+                    <td>
+                        <label>服务电话2</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="phoneNum2"/>
+                    </td>
+                </tr>
+                <!--服务电话3 -->
+                <tr>
+                    <td>
+                        <label>服务电话3</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="phoneNum2"/>
+                    </td>
+                </tr>
+                <!--其它信息 -->
+                <tr>
+                    <td>
+                        <label>其它信息</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="demoInfo"/>
+                    </td>
+                </tr>
+                <input type="hidden" id="mark_image" name="mark_image">
+            </table>
+        </form>
+        <p id="save_error" class="error" style="color: red"></p>
+        <button id="save_orgnization" class="btn btn-small btn-blue">数据提交</button>
+        <input type="hidden" id="state" value="0">
+    </div>
+</div>
+</div>
+
+<div class="grid_6">
+<div class="box round first">
+    <h2>医疗机构</h2>
+    <div class="block">
+        <div id="orgnization_pictures" >
+            <img id="preview"/>
+            <p>此处可放置医院简介</p>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>医疗机构查询</h2>
+    <div class="block">
+        <table id="orgnization_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>医院名称</th>
+                    <th>省</th>
+                    <th>县市</th>
+                    <th>地址1</th>
+                    <th>地址2</th>
+                    <th>邮编</th>
+                    <th>服务电话1</th>
+                    <th>服务电话2</th>
+                    <th>服务电话3</th>
+                    <th>其他信息</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>医院名称</th>
+                    <th>省</th>
+                    <th>县市</th>
+                    <th>地址1</th>
+                    <th>地址2</th>
+                    <th>邮编</th>
+                    <th>服务电话1</th>
+                    <th>服务电话2</th>
+                    <th>服务电话3</th>
+                    <th>其他信息</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

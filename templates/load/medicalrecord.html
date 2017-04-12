@@ -1,0 +1,73 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var Table = $('#medical_table').DataTable();
+        var bp={
+            'user':$('#patientIDHidden').val(),
+            'recordType':"4"
+        };
+        $.getJSON("/api/myMedicalRecords/",
+                  bp,
+                  function(data){
+                      console.log(data);
+                      var record = data["results"];
+                      for(var i=0;i<record.length;i++){
+                          Table.row.add( [
+                            record[i]["symptomDescription"],
+                            record[i]["upload_datetime"],
+                            record[i]["imageRecord0"]
+                        ] ).draw( false );
+                      }
+                  }
+            );
+
+        $('#medical_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                var selected_dat=Table.rows('tr.selected').data()[0][2];
+                $("#preview").attr("src",selected_dat);
+            }
+        });
+    });
+</script>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>病历图片</h2>
+    <div class="block">
+        <div id="medicalrecord_pictures" >
+            <img id="preview" style="width: 400px;height: auto;padding: 13px;"/>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>自我描述</h2>
+    <div class="block">
+        <table id="medical_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>自我描述</th>
+                    <th>上传时间</th>
+                    <th>图像记录</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>自我描述</th>
+                    <th>上传时间</th>
+                    <th>图像记录</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

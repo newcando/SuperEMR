@@ -1,0 +1,71 @@
+
+<!-- -->
+<script type="text/javascript">
+$(document).ready(function () {
+    var bp={
+            "user":$("#patientIDHidden").val()
+            //"page_size":20
+        };
+        $.getJSON("/api/bloodpressure/",
+                  bp,
+                  function(data){
+                      console.log(data);
+                      var bloodglucose_data=data["results"];
+                      var measure_datetime=[];
+                      var systolic_pressure=[];
+                      var diastolic_pressure=[];
+                      var heart_rate=[];
+                      for(var i=0;i<bloodglucose_data.length;i++){
+                          measure_datetime[i] = (bloodglucose_data[i]["measure_datetime"]);
+                          systolic_pressure[i] = (bloodglucose_data[i]["systolic_pressure"]);
+                          diastolic_pressure[i] = (bloodglucose_data[i]["diastolic_pressure"]);
+                          heart_rate[i] = (bloodglucose_data[i]["heart_rate"]);
+                      }
+                      LineTable('pressure_charts',
+                              measure_datetime,
+                              systolic_pressure,
+                              diastolic_pressure,
+                              heart_rate
+                              );
+
+                  }
+        );
+     $.getJSON("/api/bloodglucose/",
+              bp,
+              function(data){
+                  console.log(data);
+                  var bloodglucose_data=data["results"];
+                  var measure_datetime=[];
+                  var gluocose=[];
+                  for(var i=0;i<bloodglucose_data.length;i++){
+                      measure_datetime[i] = (bloodglucose_data[i]["measure_datetime"]);
+                      gluocose[i] = (bloodglucose_data[i]["gluocose"]);
+                  }
+                  LineTable1('gluocose_charts',
+                                  measure_datetime,
+                                  gluocose
+                          );
+              }
+    );
+    });
+</script>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>血压记录</h2>
+    <div class="block">
+        <div id="pressure_charts" ></div>
+    </div>
+</div>
+</div>
+
+
+
+<div class="grid_12">
+<div class="box round">
+    <h2>血糖记录</h2>
+    <div class="block">
+        <div id="gluocose_charts"></div>
+    </div>
+</div>
+</div>

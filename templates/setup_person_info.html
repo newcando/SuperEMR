@@ -1,0 +1,188 @@
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.datepicker.regional['zh-CN'] = {
+            closeText: '关闭',
+            prevText: '&#x3c;上月',
+            nextText: '下月&#x3e;',
+            currentText: '今天',
+            monthNames: ['一月','二月','三月','四月','五月','六月',
+                    '七月','八月','九月','十月','十一月','十二月'],
+            monthNamesShort: ['一月','二月','三月','四月','五月','六月',
+                    '七月','八月','九月','十月','十一月','十二月'],
+            dayNames: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+            dayNamesShort: ['周日','周一','周二','周三','周四','周五','周六'],
+            dayNamesMin: ['日','一','二','三','四','五','六'],
+            weekHeader: '周',
+            dateFormat: 'yy-mm-dd',
+            firstDay: 0,
+            isRTL: false,
+            showMonthAfterYear: true,
+            minDate:'1914-01-01',//最小日期
+            maxDate: new Date(),//最大日期,今天
+            changeMonth:true,
+            changeYear: true,
+            yearRange: "1914:+0",
+            //yearSuffix: '年',
+            showOn: "button",
+            buttonImage: "/static/img/calendar.gif",
+            buttonImageOnly: true};
+        setDatePicker('date-picker');
+        $("option[value='{{ user.educationbackground }}']").attr("selected",true);
+        initComplexArea('seachprov', 'seachcity', 'seachdistrict', area_array, sub_array, sub_arr,
+                getIDFromStr('{{ user.state }}')  ,
+                getIDFromStr('{{ user.city }}') ,
+                getIDFromStr('{{ user.district }}') );
+        $("#save_change").click(function(){
+            var areaID = getAreaID();
+            $('#state_').val(getStateNamebyID(areaID));
+            $('#city_').val(getCityNamebyID(areaID));
+            $('#district_').val(getdistrictNamebyID(areaID));
+            var bp=$("#personInfo").serialize();<!--个人信息表单数据-->
+            $.getJSON("/Ajax/PersonChange/",
+                      bp,
+                      function(data){
+                          if(data['error']=='1'){
+                              $('#set_error').text('个人信息修改出错!');
+                          }else{
+                              $('#set_error').text('个人信息修改成功!');
+                          }
+                      }
+                );
+        });
+    });
+</script>
+
+<div class="box round first">
+    <h2>个人信息</h2>
+    <div class="block">
+        <form id="personInfo">
+            <table class="form">
+                <!--账户昵称 -->
+                <tr>
+                    <td class="col1">
+                        <label>账户昵称</label>
+                    </td>
+                    <td class="col2">
+                        <input type="text" class="mini" value="{{ user.nickname }}" disabled="disabled"/>
+                    </td>
+                </tr>
+                <!--性别 -->
+                <tr>
+                    <td>
+                        <label>性别</label>
+                    </td>
+                    <td>
+                        <input type="radio" name="sex" value="1"
+                               {% ifnotequal user.sex 2 %}
+                                    disabled="disabled"
+                               {% endifnotequal %}
+                               {% ifequal user.sex 1 %}
+                                    checked="true"
+                               {% endifequal %}/>
+                        男
+                        <input type="radio" name="sex" value="0"
+                               {% ifnotequal user.sex 2 %}
+                                    disabled="disabled"
+                               {% endifnotequal %}
+                               {% ifequal user.sex 0 %}
+                                    checked="true"
+                               {% endifequal %}/>
+                        女
+                    </td>
+                </tr>
+                <!--出生年月 -->
+                <tr>
+                    <td>
+                        <label>出生年月</label>
+                    </td>
+                    <td>
+                        <input type="text" id="date-picker" name="datebirth" value="{{ user.datebirth|date:"Y-m-d" }}"/>
+                    </td>
+                </tr>
+                <!--学历 -->
+                <tr>
+                    <td>
+                        <label>学历</label>
+                    </td>
+                    <td>
+                        <select id="select" name="educationbackground">
+                            <option value="1">博士</option>
+                            <option value="2">硕士</option>
+                            <option value="3">本科</option>
+                            <option value="4">高中</option>
+                            <option value="5">初中</option>
+                            <option value="6">小学</option>
+                            <option value="0">其他</option>
+                        </select>
+                    </td>
+                </tr>
+                <!--邮箱 -->
+                <tr>
+                    <td>
+                        <label>邮箱</label>
+                    </td>
+                    <td>
+                        <input type="text" class="mini" name="uniqEmail" value="{{ user.uniqEmail }}"
+                                {% if user.is_uniqEmailActivated %}disabled="disabled"{% endif %}/>
+                    </td>
+                </tr>
+                <!--手机-->
+                <tr>
+                    <td>
+                        <label>手机</label>
+                    </td>
+                    <td>
+                        <input type="text" class="mini" name="uniqMobilePhone" value="{{ user.uniqMobilePhone }}"
+                                {% if user.is_uniqMobilePhoneActivated %}disabled="disabled"{% endif %}/>
+                    </td>
+                </tr>
+                <!--地址-->
+                <tr>
+                    <td>
+                        <label>地址</label>
+                    </td>
+                    <td>
+                        <div id="city">
+                            <select id="seachprov" name="state" onChange="changeComplexProvince(this.value, sub_array, 'seachcity', 'seachdistrict');"></select>&nbsp;&nbsp;
+                            <select id="seachcity" name="city" onChange="changeCity(this.value,'seachdistrict','seachdistrict');"></select>&nbsp;&nbsp;
+                            <span id="seachdistrict_div"><select id="seachdistrict" name="district"></select></span>
+                        </div>
+                        <input type="hidden" id="state_" name="_state">
+                        <input type="hidden" id="city_" name="_city">
+                        <input type="hidden" id="district_" name="_district">
+                    </td>
+                </tr>
+                <!--详细地址1-->
+                <tr>
+                    <td>
+                        <label>详细地址1</label>
+                    </td>
+                    <td>
+                        <input type="text" class="medium" name="addressline1" value="{{ user.addressline1 }}"/>
+                    </td>
+                </tr>
+                <!--详细地址2-->
+                <tr>
+                    <td>
+                        <label>详细地址2</label>
+                    </td>
+                    <td>
+                        <input type="text" class="medium" name="addressline2" value="{{ user.addressline2 }}"/>
+                    </td>
+                </tr>
+                <!--邮编-->
+                <tr>
+                    <td>
+                        <label>邮编</label>
+                    </td>
+                    <td>
+                        <input type="text" class="mini" name="zipcode" value="{{ user.zipcode }}"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <p id="set_error" class="error" style="color: red"></p>
+        <button id="save_change" class="btn btn-small btn-blue">保存更改</button>
+    </div>
+</div>

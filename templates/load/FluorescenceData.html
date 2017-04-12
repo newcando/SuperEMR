@@ -1,0 +1,68 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var patientName =$("#patientUsernameHidden").val();
+        var Table = $('#FluorescenceData_table').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+            },
+            "ajax": {
+                "url": "/Ajax/FluorescenceData_table/",
+                "data": {
+                    "patientName": patientName
+                }
+            }
+        });
+        $('#FluorescenceData_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+    });
+</script>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>荧光仪器测试数据</h2>
+    <div class="block">
+        <table id="FluorescenceData_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>测试项目</th>
+                    <th>测试时间</th>
+                    <th>测试结果</th>
+                    <th>测试反应时间</th>
+                    <th>测试结果</th>
+                    <th>C线位置</th>
+                    <th>基线线位置</th>
+                    <th>T1线位置</th>
+                    <th>T2线位置</th>
+                    <th>T3线位置</th>
+                    <th>T4线位置</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>测试项目</th>
+                    <th>测试时间</th>
+                    <th>测试结果</th>
+                    <th>测试反应时间</th>
+                    <th>测试结果</th>
+                    <th>C线位置</th>
+                    <th>基线线位置</th>
+                    <th>T1线位置</th>
+                    <th>T2线位置</th>
+                    <th>T3线位置</th>
+                    <th>T4线位置</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

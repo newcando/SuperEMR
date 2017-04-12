@@ -1,0 +1,62 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var patientName =$("#patientUsernameHidden").val();
+        var Table = $('#CardUse_table').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+            },
+            "ajax": {
+                "url": "/Ajax/CardUse_table/",
+                "data": {
+                    "patientName": patientName
+                }
+            }
+        });
+        $('#CardUse_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+    });
+</script>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>卡领用记录</h2>
+    <div class="block">
+        <table id="CardUse_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>项目名称</th>
+                    <th>数量</th>
+                    <th>领用人</th>
+                    <th>领用时间</th>
+                    <th>有效期</th>
+                    <th>储存条件</th>
+                    <th>卡批号</th>
+                    <th>机器ID</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>项目名称</th>
+                    <th>数量</th>
+                    <th>领用人</th>
+                    <th>领用时间</th>
+                    <th>有效期</th>
+                    <th>储存条件</th>
+                    <th>卡批号</th>
+                    <th>机器ID</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

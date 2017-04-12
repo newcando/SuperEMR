@@ -1,0 +1,34 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+</script>
+
+{% for scMeaage in user.mdlUserExtInfo_uid_set.all %}
+<div class="grid_12">
+    <div class="box round">
+        <h2>留言时间: {{scMeaage.time}}</h2>
+        <div class="block">
+            <div class="box" >
+                <b><p>{{scMeaage.text}}</p></b>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% if user.mdlUserExtInfo_uid_set.all.count == 0 %}
+<div class="grid_12">
+    <div class="box round">
+        <h2>留言</h2>
+        <div class="block">
+            <div class="box" >
+                <b><p>暂时没有留言</p></b>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+

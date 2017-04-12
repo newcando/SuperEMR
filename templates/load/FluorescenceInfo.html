@@ -1,0 +1,58 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var patientName =$("#patientUsernameHidden").val();
+        var Table = $('#FluorescenceInfo_table').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+            },
+            "ajax": {
+                "url": "/Ajax/FluorescenceInfo_table/",
+                "data": {
+                    "patientName": patientName
+                }
+            }
+        });
+        $('#FluorescenceInfo_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+    });
+</script>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>荧光仪器设备信息</h2>
+    <div class="block">
+        <table id="FluorescenceInfo_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>设备编号</th>
+                    <th>使用单位</th>
+                    <th>安装时间</th>
+                    <th>责任人</th>
+                    <th>使用状态</th>
+                    <th>维护周期</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>设备编号</th>
+                    <th>使用单位</th>
+                    <th>安装时间</th>
+                    <th>责任人</th>
+                    <th>使用状态</th>
+                    <th>维护周期</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

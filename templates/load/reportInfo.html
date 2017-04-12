@@ -1,0 +1,62 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var patientName =$("#patientUsernameHidden").val();
+        var Table = $('#report_table').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+            },
+            "ajax": {
+                "url": "/Ajax/report_table/",
+                "data": {
+                    "patientName": patientName
+                }
+            }
+        });
+        $('#report_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+    });
+</script>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>报告信息</h2>
+    <div class="block">
+        <table id="report_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>测试数据</th>
+                    <th>测试人</th>
+                    <th>测试设备</th>
+                    <th>测试卡</th>
+                    <th>测试样品</th>
+                    <th>报告状态</th>
+                    <th>报告结果</th>
+                    <th>上传时间</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>测试数据</th>
+                    <th>测试人</th>
+                    <th>测试设备</th>
+                    <th>测试卡</th>
+                    <th>测试样品</th>
+                    <th>报告状态</th>
+                    <th>报告结果</th>
+                    <th>上传时间</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

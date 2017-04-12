@@ -1,0 +1,94 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var Table = $('#medical_table').DataTable();
+        var bp={
+            'user':$('#patientIDHidden').val(),
+            'recordType':"2"
+        };
+        $.getJSON("/api/myMedicalRecords/",
+                  bp,
+                  function(data){
+                      console.log(data);
+                      var record = data["results"];
+                      for(var i=0;i<record.length;i++){
+                          Table.row.add( [
+                            record[i]["symptomDescription"],
+                            record[i]["upload_datetime"],
+                            record[i]["imageRecord0"],
+                            record[i]["imageRecord1"],
+                            record[i]["imageRecord2"],
+                            record[i]["imageRecord3"],
+                            record[i]["imageRecord4"],
+                            record[i]["imageRecord5"],
+                            record[i]["imageRecord6"],
+                            record[i]["imageRecord7"]
+                        ] ).draw( false );
+                      }
+                  }
+            );
+
+        $('#medical_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                var selected_dat=Table.rows('tr.selected').data()[0][2];
+                $("#imageRecord0").attr("src",selected_dat);
+                $("#imageRecord1").attr("src",Table.rows('tr.selected').data()[0][3]);
+                $("#imageRecord2").attr("src",Table.rows('tr.selected').data()[0][4]);
+                $("#imageRecord3").attr("src",Table.rows('tr.selected').data()[0][5]);
+                $("#imageRecord4").attr("src",Table.rows('tr.selected').data()[0][6]);
+                $("#imageRecord5").attr("src",Table.rows('tr.selected').data()[0][7]);
+                $("#imageRecord6").attr("src",Table.rows('tr.selected').data()[0][8]);
+                $("#imageRecord7").attr("src",Table.rows('tr.selected').data()[0][9]);
+            }
+        });
+    });
+</script>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>病历图片</h2>
+    <div class="block">
+        <div id="medicalrecord_pictures" >
+            <img id="imageRecord0"/>
+            <img id="imageRecord1"/>
+            <img id="imageRecord2"/>
+            <img id="imageRecord3"/>
+            <img id="imageRecord4"/>
+            <img id="imageRecord5"/>
+            <img id="imageRecord6"/>
+            <img id="imageRecord7"/>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>自我描述</h2>
+    <div class="block">
+        <table id="medical_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>自我描述</th>
+                    <th>上传时间</th>
+                    <th>图像记录</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>自我描述</th>
+                    <th>上传时间</th>
+                    <th>图像记录</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

@@ -1,0 +1,8 @@
+django==1.8
+captcha=0.2.1
+djangorestframework=3.3.3
+drfdocs=0.0.11
+django-crispy-forms
+jsonfield
+django_smart_autoregister
+django-simple-captcha

@@ -1,0 +1,119 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#search").click(function(){
+            var bp=$("#personInfo").serialize();<!--个人信息表单数据-->
+            $.getJSON("/api/usersEx/",
+                      bp,
+                      function(data){
+                          console.log(data);
+                          if(data['count']==0){
+                              $('#save_error').text('未查询到该病人信息!');
+                              $('#patientUsername').text('');
+                              $('#patientIDHidden').val(0);
+                              $('#patientInfo').attr("hidden",true);
+                          }else{
+                              $('#save_error').text('');
+                              $('#patientInfo').removeAttr("hidden");
+                              $('#patientUsername').text(data['results'][0]['nickname']);
+                              $('#uniqEmail').text(data['results'][0]['uniqEmail']);
+                              $('#patientIDHidden').val(data['results'][0]['user']);
+                              console.log($('#patientIDHidden').val());
+                          }
+                      }
+                );
+        });
+        $("#addPatient").click(function(){
+            $.getJSON("/Ajax/addPatient/",
+                      {'username':$('#patientUsername').text()},
+                      function(data){
+                           $('#save_error').text(data['error']);
+                      }
+                );
+        });
+        $("#selectPatient").click(function(){
+            $("#patientUsernameHidden").val($("#patientUsername").text());
+            $("#current_id").html( "当前病人：" + $("#patientUsername").text());
+        });
+        $(".patientClass").click(function(){
+            patientName=$(this).text();
+            patientID=$("#" + patientName).val();
+            $("#patientUsernameHidden").val(patientName);
+            $("#patientIDHidden").val(patientID);
+            $("#current_id").html( "当前病人：" + patientName);
+            $("#targetId").val(patientID);
+        });
+    });
+</script>
+
+<div class="grid_6">
+    <div class="box round first">
+        <h2>添加病人</h2>
+        <div class="block">
+        <form id="personInfo">
+        <table class="form">
+            <div id="chart1">
+                <!--病人ID-->
+                <tr>
+                    <td>
+                        <label>病人用户名</label>
+                    </td>
+                    <td>
+                        <input type="text" class="mini" name="nickname" />
+                        <input type="hidden" class="mini" name="user_type" value="A" />
+                    </td>
+                </tr>
+            </div>
+        </table>
+        </form>
+        </div>
+        <button id="search" class="btn btn-small btn-blue">查询</button>
+    </div>
+</div>
+<div class="grid_6">
+    <div class="box round first">
+        <h2>病人信息</h2>
+        <div class="block" >
+            <table id="patientInfo" class="form" hidden="hidden">
+                <!--病人ID-->
+                <tr>
+                    <td>
+                        <label>病人ID</label>
+                    </td>
+                    <td>
+                        <p id="patientUsername"></p>
+                    </td>
+                </tr>
+                <!--病人邮箱-->
+                <tr>
+                    <td>
+                        <label>病人邮箱</label>
+                    </td>
+                    <td>
+                        <p id="uniqEmail"></p>
+                    </td>
+                </tr>
+            </table>
+            <p id="save_error" class="error" style="color: red"></p>
+            <button id="addPatient" class="btn btn-small btn-blue">添加病人</button>
+            <button id="selectPatient" class="btn btn-small btn-blue">选择病人</button>
+        </div>
+    </div>
+ </div>
+<div class="clear"></div>
+
+<div class="grid_6">
+    <div class="box round">
+        <h2>我的病人</h2>
+        <div class="block">
+            <ul>
+                {% for patient in user.relative_user.all %}
+                    {% if patient.user_type == 'A' %}
+                        <input type="hidden" id={{ patient.nickname }} value={{ patient.user.pk }} />
+                        <li>昵称：<a href="#" class="patientClass">{{ patient.nickname }}</a>出生年月：{{ patient.datebirth |date:"Y-m-d" }} 邮箱：{{ patient.uniqEmail }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{#<div class="clear"></div>#}

@@ -1,0 +1,65 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var Table = $('#medical_table').DataTable();
+        var bp={
+            'user':$('#patientIDHidden').val()
+        };
+        $.getJSON("/api/myMedicineEatRecord/",
+                  bp,
+                  function(data){
+                      console.log(data);
+                      var record = data["results"];
+                      for(var i=0;i<record.length;i++){
+                          Table.row.add( [
+                            record[i]["medicine"],
+                            record[i]["method"]+"次/日",
+                            record[i]["how_use"]+"粒/次",
+                            record[i]["eatTime"],
+                            record[i]["resultDescription"]
+                        ] ).draw( false );
+                      }
+                  }
+            );
+
+        $('#medical_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+    });
+</script>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>自我描述</h2>
+    <div class="block">
+        <table id="medical_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>药物名称</th>
+                    <th>服用方法</th>
+                    <th>用量</th>
+                    <th>服药时间</th>
+                    <th>效果</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>药物名称</th>
+                    <th>服用方法</th>
+                    <th>用量</th>
+                    <th>服药时间</th>
+                    <th>效果</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

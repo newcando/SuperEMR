@@ -1,0 +1,31 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+</script>
+
+{% for scContent in user.sccontent_set.all %}
+<div class="grid_12">
+    <div class="box round">
+        <h2>发表时间: {{scContent.time}}, 评论数: {{scContent.comment_counts}}</h2>
+        <div class="block">
+            <div class="box" >
+                <b><p>{{scContent.text}}</p></b>
+                <img src={{ scContent.img1}}>
+                <img src={{ scContent.img2}}>
+                <img src={{ scContent.img3}}>
+            </div>
+            <div class="box">
+                {% for comment in scContent.scComment_set.all %}
+                    <h2>评论时间: {{comment.time}}</h2>
+                    <b>{{ comment.uid.nickname }}:</b><p>{{ comment.ctext }}</p>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endfor %}
+

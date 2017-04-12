@@ -1,0 +1,62 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var patientName =$("#patientUsernameHidden").val();
+        var Table = $('#FluorescenceTester_table').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+            },
+            "ajax": {
+                "url": "/Ajax/FluorescenceTester_table/",
+                "data": {
+                    "patientName": patientName
+                }
+            }
+        });
+        $('#FluorescenceTester_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+    });
+</script>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>设备操作人员信息</h2>
+    <div class="block">
+        <table id="FluorescenceTester_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>操作设备</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>年龄</th>
+                    <th>测试结果</th>
+                    <th>头像</th>
+                    <th>联系方式</th>
+                    <th>职务</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>操作设备</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>年龄</th>
+                    <th>测试结果</th>
+                    <th>头像</th>
+                    <th>联系方式</th>
+                    <th>职务</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

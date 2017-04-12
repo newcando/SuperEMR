@@ -1,0 +1,243 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var Table = $('#medication_table').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+            },
+            "ajax": "/Ajax/medication_table/",
+            "columnDefs": [
+                  {
+                    "targets": [ 10 ],
+                    "visible": false,
+                    "searchable": false
+                  }
+                ]
+        });
+        $('#medication_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                var selected_dat=Table.rows('tr.selected').data()[0][10];
+                $("#preview").attr("src",selected_dat);
+            }
+        });
+        $("#save_medication").click(function(){
+            var bp=$("#medicationInfo").serialize();<!--药物表单数据-->
+            $.getJSON("/Ajax/medication_add/",
+                      bp,
+                      function(data){
+                          if(data['error']=='1'){
+                              if($('#state').val()=='0'){
+                                  $('#state').val('1');
+                              }else{
+                                  $('#save_error').text('数据录入出错!');
+                              }
+                          }else{
+                              $('#save_error').text('数据录入成功!');
+                              $("#medicationInfo :input").val("");
+                              Table.row.add(data['new_medication']).draw();
+                          }
+                      }
+            );
+        });
+        $("#medication_file").uploadify({
+            'height'        : 30,
+            'swf'           :'/static/swf/uploadify.swf',
+            'uploader'      :'/Ajax/upload_mark_image/',
+            'cancelImage'   : '/static/img/uploadify-cancel.png',
+            'folder'        : '/MLImage',
+            'width'         : 120,
+            'auto'          : true,//true选定文件后是否自动上传，默认false
+            'buttonText'    : '添加图片',
+            'multi': true,//设置可以上传多个文件
+            'queueSizeLimit':1,//设置可以同时5个文件
+            'removeTimeout' : 1,
+            'preventCaching': true,                                                           //不允许缓存
+            'fileSizeLimit' : 1024*8,                                                              //文件最大
+            'fileTypeExts':'*.jpeg;*.jpg;*.gif;*.png',//设置上传文件类型为常用图片格式
+            'fileTypeDesc':'图片文件',
+            'formData' : {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            'onUploadSuccess' : function(file, data, response) {
+                info=eval('('+data+')');
+                if(info.err=='1'){alert("上传出错");}                                       //如果图片过大或者格式错误弹出错误信息
+                else{
+                    $("#preview").attr("src",info.img_url);
+                    $("#mark_image").val(info.image_path);
+                }
+            }
+        });
+    });
+</script>
+
+<div class="grid_6">
+<div class="box round first">
+    <h2>新增药物</h2>
+    <div id="medication_add" class="block">
+        {% csrf_token %}
+        <form id="medicationInfo" method="POST" enctype="multipart/form-data">
+            <table class="form">
+                <!--名称 -->
+                <tr>
+                    <td class="col1">
+                        <label>药品名称</label>
+                    </td>
+                    <td class="col2">
+                        <input type="text" class="large" name="name"/>
+                    </td>
+                </tr>
+                <!--生产厂家 -->
+                <tr>
+                    <td>
+                        <label>生产厂家</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="pharmaceutical_factory"/>
+                    </td>
+                </tr>
+                <!--功效描述 -->
+                <tr>
+                    <td>
+                        <label>功效描述</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="functionDescription"/>
+                    </td>
+                </tr>
+                <!--价格 -->
+                <tr>
+                    <td>
+                        <label>价格</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="price"/>
+                    </td>
+                </tr>
+                <!--销售商 -->
+                <tr>
+                    <td>
+                        <label>销售商</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="seller"/>
+                    </td>
+                </tr>
+                <!--销售商电话 -->
+                <tr>
+                    <td>
+                        <label>销售商电话</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="sellerPhoneNum"/>
+                    </td>
+                </tr>
+                <!--用法 -->
+                <tr>
+                    <td>
+                        <label>用法</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="method"/>
+                    </td>
+                </tr>
+                <!--用量 -->
+                <tr>
+                    <td>
+                        <label>用量</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="how_use"/>
+                    </td>
+                </tr>
+                <!--效果评价(1-10分) -->
+                <tr>
+                    <td>
+                        <label>效果评价(1-10分)</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="resultsEval"/>
+                    </td>
+                </tr>
+                <!--其它信息 -->
+                <tr>
+                    <td>
+                        <label>其它信息</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="demoInfo"/>
+                    </td>
+                </tr>
+                <!--药品外观图片 -->
+                <tr>
+                    <td>
+                        <label>药品外观图片</label>
+                    </td>
+                    <td>
+                        <input id="medication_file" type="file" class="large" name="medication_file"/>
+                    </td>
+                </tr>
+                <input type="hidden" id="mark_image" name="mark_image">
+            </table>
+        </form>
+        <p id="save_error" class="error" style="color: red"></p>
+        <button id="save_medication" class="btn btn-small btn-blue">数据提交</button>
+        <input type="hidden" id="state" value="0">
+    </div>
+</div>
+</div>
+
+<div class="grid_6">
+<div class="box round first">
+    <h2>药物图片</h2>
+    <div class="block">
+        <div id="medication_pictures" >
+            <img id="preview"/>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>药物查询</h2>
+    <div class="block">
+        <table id="medication_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>药品名称</th>
+                    <th>生产厂家</th>
+                    <th>功效描述</th>
+                    <th>价格</th>
+                    <th>销售商</th>
+                    <th>销售商电话</th>
+                    <th>用法</th>
+                    <th>用量</th>
+                    <th>效果评价(1-10分)</th>
+                    <th>其他信息</th>
+                    <th>药品外观图片</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>药品名称</th>
+                    <th>生产厂家</th>
+                    <th>功效描述</th>
+                    <th>价格</th>
+                    <th>销售商</th>
+                    <th>销售商电话</th>
+                    <th>用法</th>
+                    <th>用量</th>
+                    <th>效果评价(1-10分)</th>
+                    <th>其他信息</th>
+                    <th>药品外观图片</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

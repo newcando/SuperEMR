@@ -1,0 +1,148 @@
+
+<!-- -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var Table = $('#medication_record_table').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+            },
+            "ajax": "/Ajax/medicationrecord_table/"
+        });
+        $('input[name="eatTime"]').val(getLocalTime());
+        $('#medication_record_table tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                Table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+        $("#save_medication_record").click(function(){
+            var bp=$("#medication_recordInfo").serialize();<!--用药记录数据-->
+            $.getJSON("/Ajax/medicationrecord_add/",
+                      bp,
+                      function(data){
+                          if(data['error']=='1'){
+                              if($('#state').val()=='0'){
+                                  $('#state').val('1');
+                              }else{
+                                  $('#save_error').text('数据录入出错!');
+                              }
+                          }else{
+                              $('#save_error').text('数据录入成功!');
+                              $("#medication_recordInfo :input").val("");
+                              $('input[name="eatTime"]').val(getLocalTime());
+                              Table.row.add(data['new_medicationrecord']).draw();
+                          }
+                      }
+            );
+        });
+
+    });
+</script>
+
+<div class="grid_6">
+<div class="box round first">
+    <h2>用药记录</h2>
+    <div id="medication_record_add" class="block">
+        {% csrf_token %}
+        <form id="medication_recordInfo" method="POST" enctype="multipart/form-data">
+            <table class="form">
+                <!--名称 -->
+                <tr>
+                    <td class="col1">
+                        <label>药品名称</label>
+                    </td>
+                    <td class="col2">
+                        <select id="select" name="medicine">
+                            {% for mel in user.mdlmedicinelib_set.all %}
+                                <option value="{{ mel.name }}">{{ mel.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <!--用法 -->
+                <tr>
+                    <td>
+                        <label>用法</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="method"/>
+                    </td>
+                </tr>
+                <!--用量 -->
+                <tr>
+                    <td>
+                        <label>用量</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="how_use"/>
+                    </td>
+                </tr>
+                <!--吃药时间 -->
+                <tr>
+                    <td>
+                        <label>吃药时间</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="eatTime"/>
+                    </td>
+                </tr>
+                <!--效果记录 -->
+                <tr>
+                    <td>
+                        <label>效果记录</label>
+                    </td>
+                    <td>
+                        <input type="text" class="large" name="resultDescription"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <p id="save_error" class="error" style="color: red"></p>
+        <button id="save_medication_record" class="btn btn-small btn-blue">数据提交</button>
+        <input type="hidden" id="state" value="0">
+    </div>
+</div>
+</div>
+
+<div class="grid_6">
+<div class="box round first">
+    <h2>药物图片</h2>
+    <div class="block">
+        <div id="medication_pictures" >
+            <p>此处可放置所选药物的介绍</p>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="grid_12">
+<div class="box round first">
+    <h2>药物查询</h2>
+    <div class="block">
+        <table id="medication_record_table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>药品名称</th>
+                    <th>用法</th>
+                    <th>用量</th>
+                    <th>吃药时间</th>
+                    <th>效果记录</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>药品名称</th>
+                    <th>用法</th>
+                    <th>用量</th>
+                    <th>吃药时间</th>
+                    <th>效果记录</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>超级病历-用户注册</title>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js" ></script>
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <link  rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" />
+    <script type="text/javascript">
+  	$(function() {
+    });
+  </script>
+  <style type="text/css">
+
+  </style>
+</head>
+<body>
+<div align="center">
+    {% if form.errors %}
+        <p style="color: red;">
+            请更正以下错误.
+        </p>
+    {% endif %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="提交">
+    </form>
+</div>
+</body>
+</html>
