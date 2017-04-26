@@ -133,14 +133,14 @@ def registTeam(request):
                 r = rcloud.Group.create(request.user.mdluserextinfo.user,
                                         creat_user.mdluserextinfo.user,
                                         creat_user.mdluserextinfo.nickname)
-                return  HttpResponse(r)
+                return  JsonResponse({"code":0,'msg':r.desc})
                 # return  HttpResponse('Team register is successful.')
             else:
-                HttpResponse('support for patient only')
+                JsonResponse({'code':1,'msg':'support for patient only'})
         except:
-            return  HttpResponse('errer occur')
+            return  JsonResponse({'code':1,'msg':'errer occur'})
     else:
-        return  HttpResponse('Method POST only')
+        return  JsonResponse({'code':1,'msg':'Method POST only'})
 ###################################################注册部分完#########################################################
 
 ######################################################################################################################

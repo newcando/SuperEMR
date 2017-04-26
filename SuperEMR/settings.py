@@ -127,7 +127,7 @@ STATIC_ROOT = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR,  'static'),
 )
-#STATIC_ROOT=os.path.join(BASE_DIR,  'stat')
+STATIC_ROOT=os.path.join(BASE_DIR,  'stat')
 
 AUTH_PROFILE_MODULE = 'emr.mdlUserExtInfo' #User类扩展字段类
 LOGIN_URL='/emr/login'#登录地址

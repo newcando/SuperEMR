@@ -178,6 +178,7 @@ function LineTable2(select,measure_datetime,gluocose){
         }
     });
 }
+
 function LineTable3(select,measure_datetime,gluocose){
     $('#'+select).highcharts({
         title: {
