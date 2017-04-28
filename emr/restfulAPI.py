@@ -144,19 +144,19 @@ class bodyTemperatureSerializer(serializers.ModelSerializer):
         return models.mdlbodyTemperature.objects.create(**validated_data)
 # ViewSets define the view behavior.
 class bodyTemperatureViewSet(viewsets.ModelViewSet):
-    #queryset = models.mdlbodyTemperature.objects.all()
+    queryset = models.mdlbodyTemperature.objects.all()
     serializer_class = bodyTemperatureSerializer
     permission_classes = (AllowAny,)
     parser_classes = (FormParser, MultiPartParser, )
     #filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('temperature',)
-    def get_queryset(self):
-        try:
-            user = self.request.user
-            query = user.mdluserextinfo.mdlbodytemperature_set.all()
-        except:
-            query = None#models.mdlbodyTemperature.objects.all()
-        return query
+    filter_fields = ('user',)
+    # def get_queryset(self):
+    #     try:
+    #         user = self.request.user
+    #         query = user.mdluserextinfo.mdlbodytemperature_set.all()
+    #     except:
+    #         query = None#models.mdlbodyTemperature.objects.all()
+    #     return query
 #######################################################################################
 class bloodpressureSerializer(serializers.ModelSerializer):
     class Meta:
