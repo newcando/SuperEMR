@@ -37,7 +37,7 @@ demo.controller("main", ["$scope", "WebIMWidget", function($scope, WebIMWidget) 
     });
 
     $scope.setconversation = function() {
-        if (!!$scope.targetId) {
+       if (!!$scope.targetId) {
             WebIMWidget.setConversation(Number($scope.targetType), $scope.targetId, "用户：" + $scope.targetId);
             WebIMWidget.show();
         }

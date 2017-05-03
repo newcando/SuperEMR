@@ -48,8 +48,11 @@ demo.controller("main", ["$scope", "WebIMWidget", "$http", function($scope, WebI
         });
     });
     $scope.setconversation = function() {
+        var a = $scope.targetId;
+        var id = $("#patientIDHidden").val();
+        var name = $("#patientUsernameHidden").val();
         if (!!$scope.targetId) {
-            WebIMWidget.setConversation(Number($scope.targetType), $scope.targetId, "用户：" + $scope.targetId);
+            WebIMWidget.setConversation(Number($scope.targetType), id, "用户：" + name);
             WebIMWidget.show();
         }
     };
